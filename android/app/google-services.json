@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "571318968516",
+    "project_id": "tsa-software-dev-76048",
+    "storage_bucket": "tsa-software-dev-76048.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571318968516:android:32bac7880be51d6b152991",
+        "android_client_info": {
+          "package_name": "com.example.sleep_application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDsoyElJAZ19cguyAc-Qmt9ws2GWZ4pyE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
