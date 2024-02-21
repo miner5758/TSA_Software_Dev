@@ -195,7 +195,7 @@ void createtask(String? iD,DateTime date){
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
             // sets the background color of the `BottomNavigationBar`
-            canvasColor: Color.fromARGB(255, 186, 225, 69),
+            canvasColor: Color.fromARGB(255, 230,230,250),
             // sets the active color of the `BottomNavigationBar` if `Brightness` is light
             textTheme: Theme.of(context)
                 .textTheme

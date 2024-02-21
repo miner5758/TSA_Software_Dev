@@ -45,6 +45,8 @@ dependencies:
   cloud_firestore: ^4.15.4
   intl: ^0.19.0
   flutter_datetime_picker: ^1.5.1
+  sliding_up_panel: ^2.0.0+1
+  uuid: ^4.3.3
   
 
 dev_dependencies:
@@ -72,6 +74,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - lib/images/clock.jpg
+    - lib/images/blu.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
