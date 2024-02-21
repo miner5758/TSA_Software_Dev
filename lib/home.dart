@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'Sleep.dart';
+import 'alarms.dart';
 
 int age = 17;
 List<bool> _checked = [];
@@ -159,7 +160,7 @@ TextEditingController descriptioncontroller = TextEditingController();
   final pages = [
     const Sleeppage(),
     const MyHomePage(),
-    const Sleeppage(),
+    const Alarmpage(),
   ];
 
   void _onItemTapped(int index) {

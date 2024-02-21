@@ -197,12 +197,16 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                   fontWeight: FontWeight.bold,
                 ),),
               ),
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width * .565),
               ElevatedButton(     // this the cupertino button and here we perform all the reset button function
                 onPressed: () {
                   record(inputData(), returnFormattedText());
                   fir = true;
                   stopwatch.reset();
                 },
+                
                 child: Text("Record", style: TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,

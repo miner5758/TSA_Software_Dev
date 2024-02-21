@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 /// Flutter code sample for [NavigationBar].
 
-void main() => runApp(const MyApp());
+void main() => runApp(const Alarmpage());
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Alarmpage extends StatelessWidget {
+  const Alarmpage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,41 +31,10 @@ class _NavigationExampleState extends State<NavigationExample> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
-        indicatorColor: Colors.amber,
-        selectedIndex: currentPageIndex,
-        destinations: const <Widget>[
-          NavigationDestination(
-            selectedIcon: Icon(Icons.home),
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(Icons.alarm),
-            icon: Icon(Icons.alarm_outlined),
-            label: 'Alarms',
-          ),
-        ],
-      ),
+      
       body: <Widget>[
         /// Home page
-        Card(
-          shadowColor: Colors.transparent,
-          margin: const EdgeInsets.all(8.0),
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                'Home page',
-                style: theme.textTheme.titleLarge,
-              ),
-            ),
-          ),
-        ),
+        
 
         /// Alarms page
         Padding(
