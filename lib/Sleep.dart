@@ -107,7 +107,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
 }
 
 String musicUrl = "https://cdn.pixabay.com/audio/2024/02/14/audio_b9bc3934cc.mp3";
-String thumbnailImgUrl = "https://askthescientists.com/wp-content/uploads/2021/04/AdobeStock_240042551-835x835.jpeg"; // Insert your thumbnail URL 
+String thumbnailImgUrl = "https://images.squarespace-cdn.com/content/v1/5fa5ec79661ee904d2973ca0/1608218991352-VVQ4O65NM06XBN9F01ML/relaxing_photo_1.jpg"; // Insert your thumbnail URL 
 var player = AudioPlayer(); 
 bool loaded = false; 
 bool playing = false; 
