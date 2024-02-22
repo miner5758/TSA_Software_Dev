@@ -51,6 +51,7 @@ dependencies:
   audio_video_progress_bar: ^2.0.1
   alarm: ^3.0.12
   android_alarm_manager_plus: ^3.0.4
+  flutter_alarm_clock: ^0.1.1
   
 
 dev_dependencies:

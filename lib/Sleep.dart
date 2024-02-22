@@ -16,6 +16,16 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final db = FirebaseFirestore.instance;
 
 
+String formatTimestampdate(Timestamp timestamp) {
+  var format = new DateFormat('y-M-d'); // <- use skeleton here
+  return format.format(timestamp.toDate());
+}
+
+String formatTimestamptime(Timestamp timestamp) {
+  var format = new DateFormat('hh:mm a'); // <- use skeleton here
+  return format.format(timestamp.toDate());
+}
+
 Future<List<Object?>> _gettata(String? iD) async {
   
   CollectionReference _collectionRef =
@@ -24,9 +34,9 @@ Future<List<Object?>> _gettata(String? iD) async {
   QuerySnapshot querySnapshot = await _collectionRef.orderBy("Start").get();
 
   // Get data from docs and convert map to List
-  final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+  final allData = querySnapshot.docs.map((doc) => doc.data()).toList().reversed;
 
-  return (allData);
+  return (List.from(allData));
 }
 
 String? inputData() {
@@ -224,33 +234,6 @@ void dispose() {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       ),
-                  FutureBuilder(
-                      future: _gettata(inputData()),
-                      builder: (context, AsyncSnapshot lnapshots){
-                        if(lnapshots.hasData){
-                          if (lnapshots.data.length == 0){
-                            return Text("No Data");
-                          }  else{
-                            return ListView.builder(
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            scrollDirection: Axis.vertical,
-                            itemCount: lnapshots.data.length,
-                            itemBuilder: (context, index){
-                              return ListTile(
-                                trailing:
-                                  const FlutterLogo(),
-
-                              );
-                            }
-                            );
-                          }
-                        } else if (lnapshots.hasError){
-                          return Text("${lnapshots.hasError}");
-                        }
-                        return const CircularProgressIndicator();
-                      }
-                  ),
         SafeArea(
         child: Center(
           child: Column( // this is the column
@@ -547,6 +530,56 @@ void dispose() {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       ),
+SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.04,
+                ),
+                                     FutureBuilder(
+                      future: _gettata(inputData()),
+                      builder: (context, AsyncSnapshot lnapshots){
+                        if(lnapshots.hasData){
+                          if (lnapshots.data.length == 0){
+                            return Text("No Data");
+                          }  else{
+                            return Expanded(child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            reverse: false,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            itemCount: lnapshots.data.length,
+                            itemBuilder: (context, index){
+                              return SizedBox(child: Card(
+                                child: ExpansionTile(
+                                title: Text("Your sleep on " + formatTimestampdate(lnapshots.data[index]["Start"]).toString()),
+                                children: <Widget> [
+                                  Column(children: [
+                                    Center(child: ListTile(
+                                trailing:
+                                  Icon(Icons.punch_clock_rounded),
+                                  title: Text("Start: " + formatTimestamptime(lnapshots.data[index]["Start"]).toString()),
+
+                              ),),
+                              Center(child: ListTile(
+                                trailing:
+                                  Icon(Icons.bed_outlined),
+                                  title: Text("Duration: " + lnapshots.data[index]["Length"].toString()),
+
+                              ),)
+                                  ],)
+                                ],
+                            )
+                              ),);
+                              
+                              
+                            }
+                            )
+                            );
+                          }
+                        } else if (lnapshots.hasError){
+                          return Text("${lnapshots.hasError}");
+                        }
+                        return const CircularProgressIndicator();
+                      }
+                  ),
           ],)
             );
           } else{
@@ -720,7 +753,9 @@ void dispose() {
                                         style:  TextStyle(
                                            color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .022,
-                                            fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold,),
+                                            textAlign: TextAlign.center,
+                                            
                                       ),
                                       ),),
                                       
@@ -766,6 +801,7 @@ void dispose() {
                                            color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .022,
                                             fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.center,
                                       ),
                                       ),),
                                       
@@ -857,6 +893,7 @@ void dispose() {
                                            color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .022,
                                             fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.center,
                                       ),
                                       ),),
                                       
@@ -902,6 +939,7 @@ void dispose() {
                                            color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .022,
                                             fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.center,
                                       ),
                                       ),),
                                       

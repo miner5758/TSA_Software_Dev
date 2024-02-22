@@ -4,8 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:app_usage/app_usage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'Sleep.dart';
+import 'authentication_service.dart';
+
 import 'alarms.dart';
 
 
@@ -276,7 +279,16 @@ void createtask(String? iD,DateTime date){
                               child: Card(
                                   child: InkWell(
                                 splashColor: Colors.blue,
-                                onTap: () {},
+                                onTap: () {
+                                  print("hi");
+                                            context
+                                                .read<AuthenticationService>()
+                                                .signOut();
+                                            Navigator.popUntil(
+                                                context,
+                                                (Route<dynamic> predicate) =>
+                                                    predicate.isFirst);
+                                          },
                                 child: Row(children: <Widget>[
                                   Expanded(
                                     flex: 5,
@@ -301,7 +313,16 @@ void createtask(String? iD,DateTime date){
                               child: Card(
                                   child: InkWell(
                                 splashColor: Colors.blue,
-                                onTap: () {},
+                                onTap: () {
+                                  print("hi");
+                                            context
+                                                .read<AuthenticationService>()
+                                                .signOut();
+                                            Navigator.popUntil(
+                                                context,
+                                                (Route<dynamic> predicate) =>
+                                                    predicate.isFirst);
+                                          },
                                 child: Row(children: <Widget>[
                                   Expanded(
                                     flex: 5,
@@ -328,7 +349,16 @@ void createtask(String? iD,DateTime date){
                               child: Card(
                                   child: InkWell(
                                 splashColor: Colors.blue,
-                                onTap: () {},
+                                onTap: () {
+                                  print("hi");
+                                            context
+                                                .read<AuthenticationService>()
+                                                .signOut();
+                                            Navigator.popUntil(
+                                                context,
+                                                (Route<dynamic> predicate) =>
+                                                    predicate.isFirst);
+                                          },
                                 child: Row(children: <Widget>[
                                   Expanded(
                                     flex: 5,
@@ -353,7 +383,16 @@ void createtask(String? iD,DateTime date){
                               child: Card(
                                   child: InkWell(
                                 splashColor: Colors.blue,
-                                onTap: () {},
+                                onTap: () {
+                                  print("hi");
+                                            context
+                                                .read<AuthenticationService>()
+                                                .signOut();
+                                            Navigator.popUntil(
+                                                context,
+                                                (Route<dynamic> predicate) =>
+                                                    predicate.isFirst);
+                                          },
                                 child: Row(children: <Widget>[
                                   Expanded(
                                     flex: 5,
@@ -379,7 +418,16 @@ void createtask(String? iD,DateTime date){
                               child: Card(
                                   child: InkWell(
                                 splashColor: Colors.blue,
-                                onTap: () {},
+                                onTap: () {
+                                  print("hi");
+                                            context
+                                                .read<AuthenticationService>()
+                                                .signOut();
+                                            Navigator.popUntil(
+                                                context,
+                                                (Route<dynamic> predicate) =>
+                                                    predicate.isFirst);
+                                          },
                                 child: Row(children: <Widget>[
                                   Expanded(
                                     flex: 5,
@@ -404,7 +452,16 @@ void createtask(String? iD,DateTime date){
                               child: Card(
                                   child: InkWell(
                                 splashColor: Colors.blue,
-                                onTap: () {},
+                                onTap: () {
+                                  print("hi");
+                                            context
+                                                .read<AuthenticationService>()
+                                                .signOut();
+                                            Navigator.popUntil(
+                                                context,
+                                                (Route<dynamic> predicate) =>
+                                                    predicate.isFirst);
+                                          },
                                 child: Row(children: <Widget>[
                                   Expanded(
                                     flex: 5,
@@ -493,7 +550,7 @@ void createtask(String? iD,DateTime date){
                           ),
                           SizedBox(
                               height: MediaQuery.of(context).size.height * .02),
-                          
+                          Expanded(child:
                           ListView.builder(
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
@@ -505,6 +562,7 @@ void createtask(String? iD,DateTime date){
                               ));
                             }
                           ),
+                          )
                         ],
                       ),
                     ),
@@ -600,7 +658,7 @@ void createtask(String? iD,DateTime date){
                           ),
                           SizedBox(
                               height: MediaQuery.of(context).size.height * .02),
-                          
+                          Expanded(child: 
                           ListView.builder(
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
@@ -611,6 +669,7 @@ void createtask(String? iD,DateTime date){
                            formatTimestamptime(lnapshots.data[index]["time"]).toString(),
                               ));
                             }
+                          )
                           ),
                         ],
                       ),
@@ -769,7 +828,7 @@ return null;
                      actions: [
                       Row(children: <Widget>[
                         ElevatedButton(
-                          child: Text("Cencel"),
+                          child: Text("Cancel"),
                           onPressed: () {
                             namecontroller.text = "";
                             descriptioncontroller.text = "";
