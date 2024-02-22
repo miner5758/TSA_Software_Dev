@@ -4,11 +4,30 @@ import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter/cupertino.dart';
+
+
 
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final db = FirebaseFirestore.instance;
 
+
+Future<List<Object?>> _gettata(String? iD) async {
+  
+  CollectionReference _collectionRef =
+      db.collection("Users").doc("$iD").collection("Tracking");
+  // Get docs from collection reference
+  QuerySnapshot querySnapshot = await _collectionRef.orderBy("Start").get();
+
+  // Get data from docs and convert map to List
+  final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+  return (allData);
+}
 
 String? inputData() {
   final User? user = auth.currentUser;
@@ -37,6 +56,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
   late Timer t;
   DateTime _now = DateTime(2024);
   bool fir = true;
+  String _pag = "";
 
   void record(String? iD,String time){
   var uuid = const Uuid();
@@ -75,6 +95,53 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
 
   return "$hoursStr:$minutes:$seconds:$milliseconds";  // Concatenate with hours
 }
+
+String musicUrl = "https://cdn.pixabay.com/audio/2024/02/14/audio_b9bc3934cc.mp3";
+String thumbnailImgUrl = "https://askthescientists.com/wp-content/uploads/2021/04/AdobeStock_240042551-835x835.jpeg"; // Insert your thumbnail URL 
+var player = AudioPlayer(); 
+bool loaded = false; 
+bool playing = false; 
+
+
+void createbedtime(String? iD,DateTime date){
+  
+    db.collection('Users').doc("$iD").collection("Bedtimes").doc("bedtime 1").set(
+      {
+        "Active":true,
+        
+        "time":Timestamp.fromDate(date),
+        }
+        );
+
+}
+ 
+void loadMusic() async { 
+  await player.setUrl(musicUrl); 
+  setState(() { 
+    loaded = true; 
+  }); 
+} 
+ 
+void playMusic() async { 
+  setState(() { 
+    playing = true; 
+  }); 
+  await player.play(); 
+} 
+ 
+void pauseMusic() async { 
+  setState(() { 
+    playing = false; 
+  }); 
+  await player.pause(); 
+} 
+ 
+ 
+@override 
+void dispose() { 
+  player.dispose(); 
+  super.dispose(); 
+}
  
   @override
   void initState() {
@@ -101,8 +168,389 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
           isDraggable: false,
           minHeight: MediaQuery.of(context).size.height * 0,
           maxHeight: MediaQuery.of(context).size.height * .95,
+        panel: 
+       Center(
+        child: Builder(
+        builder: (context) {
+          if (_pag == "tracking"){
+            return Container(
+                  decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF3366FF),
+                  const Color(0xFF00CCFF),
+                ],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp),
+          ),
+                  child:
+        Column( children: [
+          SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.88,
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.06,
+                      width: MediaQuery.of(context).size.width * 0.10,
+                      foregroundDecoration: BoxDecoration(
+                        border: Border.all(
+                          width: 5,
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                      child: InkWell(
+                          splashColor: Colors.blue,
+                          onTap: () {
+                            _pc1.close();
+                          },
+                          child: const FittedBox(
+                              child: Icon(
+                                Icons.close,
+                              ),
+                              fit: BoxFit.fill)),
+                    ),
+                  ],
+                ),
+                Center(child:Text(
+                                        "Sleep Tracker",
+                                        style:  TextStyle(
+                                            fontSize: MediaQuery.of(context).size.height * .03,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      ),
+                  FutureBuilder(
+                      future: _gettata(inputData()),
+                      builder: (context, AsyncSnapshot lnapshots){
+                        if(lnapshots.hasData){
+                          if (lnapshots.data.length == 0){
+                            return Text("No Data");
+                          }  else{
+                            return ListView.builder(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            itemCount: lnapshots.data.length,
+                            itemBuilder: (context, index){
+                              return ListTile(
+                                trailing:
+                                  const FlutterLogo(),
+
+                              );
+                            }
+                            );
+                          }
+                        } else if (lnapshots.hasError){
+                          return Text("${lnapshots.hasError}");
+                        }
+                        return const CircularProgressIndicator();
+                      }
+                  ),
+        SafeArea(
+        child: Center(
+          child: Column( // this is the column
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+ 
+              ElevatedButton(
+                onPressed: () {
+                  handleStartStop();
+                },
+                 style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, shadowColor: Colors.transparent),
+                
+                child: Container(
+                  height: MediaQuery.of(context).size.height * .30,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,  // this one is use for make the circle on ui.
+                    border: Border.all(
+                      color: Color.fromARGB(255, 235, 77, 3),
+                      width: MediaQuery.of(context).size.height * .005,
+                    ),
+                  ),
+                  child: Text(returnFormattedText(), style: TextStyle(
+                    color: Colors.black,
+                    
+                    fontSize: MediaQuery.of(context).size.height * .046,
+                    fontWeight: FontWeight.bold,
+                  ),),
+                ),
+              ),
+ 
+              SizedBox(height: MediaQuery.of(context).size.height * .02,),
+
+              Row(children: [
+              ElevatedButton(     // this the cupertino button and here we perform all the reset button function
+                onPressed: () {
+                  fir = true;
+                  stopwatch.reset();
+                },
+                child: Text("Reset", style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),),
+              ),
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width * .55),
+              ElevatedButton(     // this the cupertino button and here we perform all the reset button function
+                onPressed: () {
+                  record(inputData(), returnFormattedText());
+                  fir = true;
+                  stopwatch.reset();
+                },
+                
+                child: Text("Record", style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),),
+              ),
+              ],)
+            ],
+          ),
+        
+        ),
+      ),
+        ]),
+        ); 
+          } else if(_pag == "playlist"){
+            return Container(
+                  decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF3366FF),
+                  const Color(0xFF00CCFF),
+                ],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp),
+          ),
+                  child:
+        Column( 
+          children: [
+            SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+            Row(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.88,
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.06,
+                      width: MediaQuery.of(context).size.width * 0.10,
+                      foregroundDecoration: BoxDecoration(
+                        border: Border.all(
+                          width: 5,
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                      child: InkWell(
+                          splashColor: Colors.blue,
+                          onTap: () {
+                            _pc1.close();
+                          },
+                          child: const FittedBox(
+                              child: Icon(
+                                Icons.close,
+                              ),
+                              fit: BoxFit.fill)),
+                    ),
+                  ],
+                ),
+
+                Center(child:Text(
+                                        "Playlist",
+                                        style:  TextStyle(
+                                            fontSize: MediaQuery.of(context).size.height * .03,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      ),
+
+              const Spacer( 
+            flex: 2, 
+          ), 
+          ClipRRect( 
+            borderRadius: BorderRadius.circular(8), 
+            child: Image.network( 
+              thumbnailImgUrl, 
+              height: 350, 
+              width: 350, 
+              fit: BoxFit.cover, 
+            ), 
+          ), 
+          const Spacer(), 
+          Padding( 
+            padding: const EdgeInsets.symmetric(horizontal: 8), 
+            child: 
+            StreamBuilder( 
+                stream: player.positionStream, 
+                builder: (context, snapshot1) { 
+                  final Duration duration = loaded 
+                      ? snapshot1.data as Duration 
+                      : const Duration(seconds: 0); 
+                  return StreamBuilder( 
+                      stream: player.bufferedPositionStream, 
+                      builder: (context, snapshot2) { 
+                        final Duration bufferedDuration = loaded 
+                            ? snapshot2.data as Duration 
+                            : const Duration(seconds: 0); 
+                        return SizedBox( 
+                          height: 30, 
+                          child: Padding( 
+                            padding: const EdgeInsets.symmetric(horizontal: 16), 
+                            child: ProgressBar( 
+                              progress: duration, 
+                              total: 
+                                  player.duration ?? const Duration(seconds: 0), 
+                              buffered: bufferedDuration, 
+                              timeLabelPadding: -1, 
+                              timeLabelTextStyle: const TextStyle( 
+                                  fontSize: 14, color: Colors.black), 
+                              progressBarColor: Colors.red, 
+                              baseBarColor: Colors.grey[200], 
+                              bufferedBarColor: Colors.grey[350], 
+                              thumbColor: Colors.red, 
+                              onSeek: loaded 
+                                  ? (duration) async { 
+                                      await player.seek(duration); 
+                                    } 
+                                  : null, 
+                            ), 
+                          ), 
+                        ); 
+                      }); 
+                }), 
+          ),
+ 
+          const SizedBox( 
+            height: 8, 
+          ), 
+          Row( 
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
+            children: [ 
+              const SizedBox( 
+                width: 10, 
+              ), 
+              IconButton( 
+                  onPressed: loaded 
+                      ? () async { 
+                          if (player.position.inSeconds >= 10) { 
+                            await player.seek(Duration( 
+                                seconds: player.position.inSeconds - 10)); 
+                          } else { 
+                            await player.seek(const Duration(seconds: 0)); 
+                          } 
+                        } 
+                      : null, 
+                  icon: const Icon(Icons.fast_rewind_rounded)), 
+              Container( 
+                height: 50, 
+                width: 50, 
+                decoration: const BoxDecoration( 
+                    shape: BoxShape.circle, color: Colors.red), 
+                child: IconButton( 
+                    onPressed: loaded 
+                        ? () { 
+                            if (playing) { 
+                              pauseMusic(); 
+                            } else { 
+                              playMusic(); 
+                            } 
+                          } 
+                        : null, 
+                    icon: Icon( 
+                      playing ? Icons.pause : Icons.play_arrow, 
+                      color: Colors.white, 
+                    )), 
+              ), 
+              IconButton( 
+                  onPressed: loaded 
+                      ? () async { 
+                          if (player.position.inSeconds + 10 <= 
+                              player.duration!.inSeconds) { 
+                            await player.seek(Duration( 
+                                seconds: player.position.inSeconds + 10)); 
+                          } else { 
+                            await player.seek(const Duration(seconds: 0)); 
+                          } 
+                        } 
+                      : null, 
+                  icon: const Icon(Icons.fast_forward_rounded)), 
+              const SizedBox( 
+                width: 10, 
+              ), 
+            ], 
+          ), 
+          const Spacer( 
+            flex: 2, 
+          ) 
+        ], 
       
-        panel: Container(
+                
+            ),
+        );
+          }else if(_pag == "history"){
+            return Container(
+                  decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF3366FF),
+                  const Color(0xFF00CCFF),
+                ],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp),
+          ),
+          child: Column(children: [
+            SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.88,
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.06,
+                      width: MediaQuery.of(context).size.width * 0.10,
+                      foregroundDecoration: BoxDecoration(
+                        border: Border.all(
+                          width: 5,
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                      child: InkWell(
+                          splashColor: Colors.blue,
+                          onTap: () {
+                            _pc1.close();
+                          },
+                          child: const FittedBox(
+                              child: Icon(
+                                Icons.close,
+                              ),
+                              fit: BoxFit.fill)),
+                    ),
+                  ],
+                ),
+                Center(child:Text(
+                                        "Sleep History",
+                                        style:  TextStyle(
+                                            fontSize: MediaQuery.of(context).size.height * .03,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      ),
+          ],)
+            );
+          } else{
+            return Container(
                   decoration: BoxDecoration(
             gradient: LinearGradient(
                 colors: [
@@ -219,7 +667,14 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
         ),
       ),
         ]),
-        ),
+        );
+          }
+
+          
+        },
+      ),
+       ),
+        
       body:
       Container(
                   decoration: BoxDecoration(
@@ -250,7 +705,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                             width: (MediaQuery.of(context).size.width),
                             foregroundDecoration: const BoxDecoration(
                                 image: DecorationImage(
-                              image: AssetImage('lib/images/blu.jpg'),
+                              image: AssetImage('lib/images/back.jpg'),
                               fit: BoxFit.fill,
                             )),
                           ),
@@ -263,7 +718,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                                 child: Center(child:Text(
                                         "The average ${snapshot.data.toString()} year old must get around",
                                         style:  TextStyle(
-                                           color: Colors.white,
+                                           color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .022,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -276,7 +731,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                                 child: Center(child:Text(
                                         "10 to 14 hours of sleep",
                                         style:  TextStyle(
-                                           color: Colors.white,
+                                           color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .03,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -295,7 +750,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                             width: (MediaQuery.of(context).size.width),
                             foregroundDecoration: const BoxDecoration(
                                 image: DecorationImage(
-                              image: AssetImage('lib/images/blu.jpg'),
+                              image: AssetImage('lib/images/back.jpg'),
                               fit: BoxFit.fill,
                             )),
                           ),
@@ -308,7 +763,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                                 child: Center(child:Text(
                                         "The average ${snapshot.data.toString()} year old must get around",
                                         style:  TextStyle(
-                                           color: Colors.white,
+                                           color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .022,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -321,7 +776,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                                 child: Center(child:Text(
                                         "9 to 11 hours of sleep",
                                         style:  TextStyle(
-                                           color: Colors.white,
+                                           color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .03,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -340,7 +795,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                             width: (MediaQuery.of(context).size.width),
                             foregroundDecoration: const BoxDecoration(
                                 image: DecorationImage(
-                              image: AssetImage('lib/images/blu.jpg'),
+                              image: AssetImage('lib/images/back.jpg'),
                               fit: BoxFit.fill,
                             )),
                           ),
@@ -353,9 +808,10 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                                 child: Center(child:Text(
                                         "The average ${snapshot.data.toString()} year old must get around",
                                         style:  TextStyle(
-                                           color: Colors.white,
+                                           color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .022,
                                             fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.center,
                                       ),
                                       ),),
                                       
@@ -366,7 +822,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                                 child: Center(child:Text(
                                         "8 to 10 hours of sleep",
                                         style:  TextStyle(
-                                           color: Colors.white,
+                                           color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .03,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -385,7 +841,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                             width: (MediaQuery.of(context).size.width),
                             foregroundDecoration: const BoxDecoration(
                                 image: DecorationImage(
-                              image: AssetImage('lib/images/blu.jpg'),
+                              image: AssetImage('lib/images/back.jpg'),
                               fit: BoxFit.fill,
                             )),
                           ),
@@ -398,7 +854,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                                 child: Center(child:Text(
                                         "The average ${snapshot.data.toString()} year old must get around",
                                         style:  TextStyle(
-                                           color: Colors.white,
+                                           color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .022,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -411,7 +867,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                                 child: Center(child:Text(
                                         "7 to 9 hours of sleep",
                                         style:  TextStyle(
-                                           color: Colors.white,
+                                           color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .03,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -430,7 +886,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                             width: (MediaQuery.of(context).size.width),
                             foregroundDecoration: const BoxDecoration(
                                 image: DecorationImage(
-                              image: AssetImage('lib/images/blu.jpg'),
+                              image: AssetImage('lib/images/back.jpg'),
                               fit: BoxFit.fill,
                             )),
                           ),
@@ -443,7 +899,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                                 child: Center(child:Text(
                                         "The average ${snapshot.data.toString()} year old must get around",
                                         style:  TextStyle(
-                                           color: Colors.white,
+                                           color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .022,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -456,7 +912,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
                                 child: Center(child:Text(
                                         "7 to 8 hours of sleep",
                                         style:  TextStyle(
-                                           color: Colors.white,
+                                           color: Colors.black,
                                             fontSize: MediaQuery.of(context).size.height * .03,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -496,6 +952,7 @@ Align( //The align widget
                                 onTap: () {
                                   _visible = true;
                               setState(() {});
+                              _pag = "tracking";
                               _pc1.open();
                                   },
                                 child: Center(child:Text(
@@ -537,7 +994,87 @@ Align( //The align widget
                                 onTap: () {
                                   _visible = true;
                               setState(() {});
-                              _pc1.open();
+                              _pag = "playlist";
+                              showDialog(
+  context: context,
+  builder: (context){
+    return AlertDialog(
+      scrollable: true,
+                    title: Text('Pick Song'),
+                    content: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(children: [
+                        ElevatedButton(onPressed: (){
+                          
+                          setState(() {
+                            musicUrl = "https://cdn.pixabay.com/audio/2024/02/14/audio_b9bc3934cc.mp3";
+                            loadMusic();
+                          });
+                          loaded = false; 
+                          playing = false; 
+                          Navigator.pop(context);
+                          _pc1.open();
+                        }, child: const Text('One')),
+                        ElevatedButton(onPressed: (){
+                          
+                          setState(() {
+                            musicUrl = "https://cdn.pixabay.com/audio/2024/01/23/audio_eec3a6aae5.mp3";
+                            loadMusic();
+                          });
+                          loaded = false; 
+                          playing = false;
+                          Navigator.pop(context);
+                          _pc1.open();
+                        }, child: const Text('two')),
+                        ElevatedButton(onPressed: (){
+                          
+                          setState(() {
+                            musicUrl = "https://cdn.pixabay.com/audio/2023/01/29/audio_580d2c877d.mp3";
+                            loadMusic();
+                          });
+                          loaded = false; 
+                          playing = false;
+                          Navigator.pop(context);
+                          _pc1.open();
+                        }, child: const Text('three')),
+                        ElevatedButton(onPressed: (){
+                         
+                          setState(() {
+                            musicUrl = "https://cdn.pixabay.com/audio/2024/02/08/audio_63e77cccc2.mp3";
+                            loadMusic();
+                          });
+                          loaded = false; 
+                          playing = false;
+                          Navigator.pop(context);
+                          _pc1.open();
+                        }, child: const Text('four')),
+                        ElevatedButton(onPressed: (){
+                          
+                          setState(() {
+                            musicUrl = "https://cdn.pixabay.com/audio/2024/01/09/audio_3311c4e7b3.mp3";
+                            loadMusic();
+                          });
+                          loaded = false; 
+                          playing = false;
+                          Navigator.pop(context);
+                          _pc1.open();
+                        }, child: const Text('five')),
+                        ElevatedButton(onPressed: (){
+                          
+                          setState(() {
+                            musicUrl = "https://cdn.pixabay.com/audio/2024/01/16/audio_9fc2c1b277.mp3";
+                            loadMusic();
+                          });
+                          loaded = false; 
+                          playing = false;
+                          Navigator.pop(context);
+                          _pc1.open();
+                        }, child: const Text('six')),
+                      ],)
+    ));
+  }
+                              );
+                              
                                   },
                                 child: Center(child:Text(
                                         "Sleep Soundtracks",
@@ -575,9 +1112,54 @@ Align( //The align widget
             ), child: InkWell(
           splashColor: Colors.blue,
                                 onTap: () {
-                                  _visible = true;
-                              setState(() {});
-                              _pc1.open();
+                                 showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  DateTime _date = DateTime.now();
+                  return AlertDialog(
+                    scrollable: true,
+                    title: Text('Pick Date'),
+                    content: 
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child:SizedBox(
+              height: 200,
+              width: MediaQuery.of(context).size.width,
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.dateAndTime,
+                
+                initialDateTime: DateTime.now(),
+                onDateTimeChanged: (DateTime newDateTime) {
+                  setState(() {
+                    _date = newDateTime;
+                  });
+                  
+                },
+                use24hFormat: false,
+                minuteInterval: 1,
+              ),
+            )
+                    ),
+                    actions: [
+                      ElevatedButton(
+                          child: Text("Cencel"),
+                          onPressed: () {
+                            _date = DateTime.now();
+                           Navigator.pop(context);
+                          }),
+
+                          ElevatedButton(
+                          child: Text("Submit"),
+                          onPressed: () {
+
+                           createbedtime(inputData(),_date);
+                           Navigator.pop(context);
+                           _date = DateTime.now();
+                           
+                          }),
+                    ],
+                  );
+  });
                                   },
                                 child: Center(child:Text(
                                         "Set Bedtime",
@@ -615,8 +1197,9 @@ SizedBox(
             ), child: InkWell(
           splashColor: Colors.blue,
                                 onTap: () {
-                                  _visible = true;
+                                   _visible = true;
                               setState(() {});
+                              _pag = "history";
                               _pc1.open();
                                   },
                                 child: Center(child:Text(
@@ -632,8 +1215,7 @@ SizedBox(
         )
 ),
                       
-                        
-                      
+                               
                     ],
                   )
       )

@@ -8,6 +8,8 @@ import 'package:intl/intl.dart';
 import 'Sleep.dart';
 import 'alarms.dart';
 
+
+
 int age = 17;
 List<bool> _checked = [];
 
@@ -204,16 +206,16 @@ void createtask(String? iD,DateTime date){
         child: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.call),
+              icon: Icon(Icons.bed),
               label: 'Sleep',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.camera),
+              icon: Icon(Icons.home),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.chat),
-              label: 'Alarm',
+              icon: Icon(Icons.alarm_add),
+              label: 'Alarms',
             ),
           ],
           currentIndex: _selectedIndex,
@@ -227,15 +229,9 @@ void createtask(String? iD,DateTime date){
             : 
               Container(
                   decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [
-                  const Color(0xFF3366FF),
-                  const Color(0xFF00CCFF),
-                ],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 0.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp),
+            image: DecorationImage(
+                image: AssetImage("lib/images/back.jpg"),
+                fit: BoxFit.cover),
           ),
                   child: Column(
                           children: [    
@@ -250,6 +246,7 @@ void createtask(String? iD,DateTime date){
                       return Center(child:Text(
                                         "Welcome back " + snapshots.data.toString(),
                                         style: const TextStyle(
+                                          
                                             fontSize: 25,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -286,9 +283,9 @@ void createtask(String? iD,DateTime date){
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 19.0),
                                       child: Center(child:Text(
-                                        "You have a screen time of ${lnapshots.data.inHours} Hours. You are ${lnapshots.data.inHours - 1} over the recommended screen time for someone you age it is recommended that you get less than 1 hour of screen time per day. Blue light can negatively affect your ability to fall alseep so work on reducing it anyway you can.",
-                                        style: const TextStyle(
-                                            fontSize: 20,
+                                        "You have a screen time of ${lnapshots.data.inHours} hours. You are ${lnapshots.data.inHours - 1} hours over the recommended screen time for someone your age as it is recommended that you get less than 1 hour of screen time per day. Blue light can negatively affect your ability to fall alseep so work on reducing it anyway you can.",
+                                        style:  TextStyle(
+                                            fontSize: MediaQuery.of(context).size.height * .016,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       )
@@ -312,8 +309,8 @@ void createtask(String? iD,DateTime date){
                                       padding: const EdgeInsets.only(left: 19.0),
                                       child: Center(child:Text(
                                         "You have a screen time of ${lnapshots.data.inHours} Hours, keep it up!",
-                                        style: const TextStyle(
-                                            fontSize: 20,
+                                        style:  TextStyle(
+                                            fontSize: MediaQuery.of(context).size.height * .2,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       )
@@ -338,9 +335,9 @@ void createtask(String? iD,DateTime date){
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 19.0),
                                       child: Center(child:Text(
-                                        "You have a screen time of ${lnapshots.data.inHours} Hours. You are ${lnapshots.data.inHours - 2} over the recommended screen time for someone you age it is recommended that you get less than 2 hours of screen time per day. Blue light can negatively affect your ability to fall alseep so work on reducing it anyway you can.",
-                                        style: const TextStyle(
-                                            fontSize: 20,
+                                        "You have a screen time of ${lnapshots.data.inHours} hours. You are ${lnapshots.data.inHours - 2} hours over the recommended screen time for someone your age as it is recommended that you get less than 2 hours of screen time per day. Blue light can negatively affect your ability to fall alseep so work on reducing it anyway you can.",
+                                        style:  TextStyle(
+                                            fontSize: MediaQuery.of(context).size.height * .016,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       )
@@ -364,8 +361,8 @@ void createtask(String? iD,DateTime date){
                                       padding: const EdgeInsets.only(left: 19.0),
                                       child: Center(child:Text(
                                         "You have a screen time of ${lnapshots.data.inHours} Hours, keep it up!",
-                                        style: const TextStyle(
-                                            fontSize: 20,
+                                        style:  TextStyle(
+                                            fontSize: MediaQuery.of(context).size.height * .2,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       )
@@ -389,9 +386,9 @@ void createtask(String? iD,DateTime date){
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 19.0),
                                       child: Center(child:Text(
-                                        "You have a screen time of ${lnapshots.data.inHours} Hours. You are ${lnapshots.data.inHours - 3} over the recommended screen time for someone you age it is recommended that you get less than 3 hours of screen time per day. Blue light can negatively affect your ability to fall alseep so work on reducing it anyway you can.",
-                                        style: const TextStyle(
-                                            fontSize: 20,
+                                        "You have a screen time of ${lnapshots.data.inHours} Hours. You are ${lnapshots.data.inHours - 3} hours over the recommended screen time for someone your age as it is recommended that you get less than 3 hours of screen time per day. Blue light can negatively affect your ability to fall alseep so work on reducing it anyway you can.",
+                                        style:  TextStyle(
+                                            fontSize: MediaQuery.of(context).size.height * .016,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       )
@@ -415,8 +412,8 @@ void createtask(String? iD,DateTime date){
                                       padding: const EdgeInsets.only(left: 19.0),
                                       child: Center(child:Text(
                                         "You have a screen time of ${lnapshots.data.inHours} Hours, keep it up!",
-                                        style: const TextStyle(
-                                            fontSize: 20,
+                                        style:  TextStyle(
+                                            fontSize: MediaQuery.of(context).size.height * .2,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       )
@@ -812,6 +809,8 @@ return null;
     minimumSize: Size(MediaQuery.of(context).size.width/2, 50), // Adjust size as needed
   ),
 ),
+SizedBox(
+                      height: MediaQuery.of(context).size.height * .02),
 
                 Expanded(
           child: SizedBox(
@@ -826,7 +825,10 @@ return null;
                             scrollDirection: Axis.vertical,
                             itemCount: snapshots.data.length,
                             itemBuilder: (context, index){
-                      return CheckboxListTile(
+                      return Card(
+                        color: Colors.white,
+                        child:
+                      CheckboxListTile(
                   title:  Text(snapshots.data[index]['name'].toString()),
                   subtitle:  Text(snapshots.data[index]['Des'].toString()),
                   secondary: const Icon(Icons.code),
@@ -838,6 +840,7 @@ return null;
                     updatetask(inputData(),value,snapshots.data[index]["name"].toString());
                     setState(() {});
                   },
+                      )
                 );
                       
                          }
@@ -849,7 +852,9 @@ return null;
                       }
                           ),
           )
-                )
+                ),
+                SizedBox(
+                      height: MediaQuery.of(context).size.height * .02),
 
                         ])
                       

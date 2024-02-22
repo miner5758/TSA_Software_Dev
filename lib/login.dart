@@ -4,7 +4,7 @@ import 'authentication_service.dart';
 
 class Logscreen extends StatelessWidget {
   const Logscreen({Key? key}) : super(key: key);
-  static const String _title = 'Zenex';
+  static const String _title = 'Team 23238-1';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,7 +14,7 @@ class Logscreen extends StatelessWidget {
           leading: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Image.asset(
-              "lib/images/clock.jpg",
+              "lib/images/logo.png",
             ),
           ),
           centerTitle: true,
@@ -22,14 +22,14 @@ class Logscreen extends StatelessWidget {
             _title,
             style: TextStyle(fontSize: 25, fontStyle: FontStyle.italic),
           ),
-          backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+          backgroundColor: Color.fromARGB(255, 167, 166, 166),
         ),
       ),
       body: Container(
         child: const MyStatefulWidget(),
         decoration: const BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("lib/images/clock.jpg"),
+                image: AssetImage("lib/images/back.jpg"),
                 fit: BoxFit.cover)),
       ),
     );
@@ -57,7 +57,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
               alignment: Alignment.center,
               padding: const EdgeInsets.all(10),
               child: const Text(
-                'ZenPay',
+                'Sleeper',
                 style: TextStyle(
                     color: Color.fromARGB(255, 0, 0, 0),
                     fontWeight: FontWeight.w500,

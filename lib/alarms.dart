@@ -1,108 +1,220 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
+import 'package:alarm/alarm.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
-/// Flutter code sample for [NavigationBar].
+final FirebaseAuth auth = FirebaseAuth.instance;
+final db = FirebaseFirestore.instance;
 
-void main() => runApp(const Alarmpage());
+
+String formatTimestampdate(Timestamp timestamp) {
+  var format = new DateFormat('y-M-d'); // <- use skeleton here
+  return format.format(timestamp.toDate());
+}
+
+String formatTimestamptime(Timestamp timestamp) {
+  var format = new DateFormat('hh:mm a'); // <- use skeleton here
+  return format.format(timestamp.toDate());
+}
+
+
+String? inputData() {
+  final User? user = auth.currentUser;
+  final uid = user?.uid;
+  return uid;
+}
+
+Future<List<Object?>> _gettata(String? iD) async {
+  
+  CollectionReference _collectionRef =
+      db.collection("Users").doc("$iD").collection("Alarms");
+  // Get docs from collection reference
+  QuerySnapshot querySnapshot = await _collectionRef.orderBy("time").get();
+
+  // Get data from docs and convert map to List
+  final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+  return (allData);
+}
 
 class Alarmpage extends StatelessWidget {
   const Alarmpage({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: const NavigationExample(),
+    return Scaffold(
+      body: MyStatefulWidgetsecond(),
     );
   }
 }
-var alarms = [{"hour": 15, "minute": 10, "repeat": [1,2,3,4,5,6,7], "name": "testalarm0", "enabled": false},{"hour": 3, "minute": 15, "repeat": [1,2,3,4,5,6,7], "name": "testalarm0"}];
 
-class NavigationExample extends StatefulWidget {
-  const NavigationExample({super.key});
 
+class MyStatefulWidgetsecond extends StatefulWidget {
+   MyStatefulWidgetsecond({Key? key}) : super(key: key);
   @override
-  State<NavigationExample> createState() => _NavigationExampleState();
+  State<MyStatefulWidgetsecond> createState() => _MyStatefulWidgetStatesecond();
 }
 
-class _NavigationExampleState extends State<NavigationExample> {
-  int currentPageIndex = 0;
+class _MyStatefulWidgetStatesecond extends State<MyStatefulWidgetsecond>{
+  void updateact(String? iD,bool value,String dic){
+    db.collection('Users').doc("$iD").collection("Alarms").doc("$dic").update({'Active': value});
+}
+
+  Future<void> set(var here) async {
+    await Alarm.init();
+    await Alarm.set(alarmSettings: here);
+
+  }
+@override
+  void initState() {
+    
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
     return Scaffold(
-      
-      body: <Widget>[
-        /// Home page
-        
-
-        /// Alarms page
-        Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              for (var item in alarms ) Card(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    ListTile(
-                        leading: Icon(Icons.alarm),
-                        title: Text(item["name"] as String),
-                        subtitle: Text('${item["hour"]}:${item["minute"]}'),
+      body: Center(
+child:
+     Container(
+                  decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF3366FF),
+                  const Color(0xFF00CCFF),
+                ],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp),
+          ),
+          child: Column(children: [
+            SizedBox(
+                              height: MediaQuery.of(context).size.height * .10),
+            Center(child:Text(
+                                        "Your Alarms",
+                                        style:  TextStyle(
+                                            fontSize: MediaQuery.of(context).size.height * .03,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      ),
+                                      SizedBox(
+                              height: MediaQuery.of(context).size.height * .05),
+             FutureBuilder(
+                      future: _gettata(inputData()),
+                      builder: (context, AsyncSnapshot lnapshots){
+                         if (lnapshots.hasData) {
+                          if (lnapshots.data.length == 0) {
+                            return Container(
+                    width:  MediaQuery.of(context).size.width / 2.01,
+                    height: MediaQuery.of(context).size.height / 6.3,
+                    decoration: BoxDecoration(
                     ),
-                    const Row(
+                    child: Card(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text(
+                            'Upcoming Alarms',
+                          ),
+                          SizedBox(
+                              height: MediaQuery.of(context).size.height * .02),
+                          
+                          Center(child: Text(
+                           "None",
+                              )),
+                        ],
+                      ),
+                    ),
+                  );
+                          }else{
+                            return ListView.builder(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            itemCount: lnapshots.data.length,
+                            itemBuilder: (context, index){
+                              return Card(child:
+                  Column(
+                     mainAxisSize: MainAxisSize.min,
+                    children: [
+ListTile(
+                        leading: Icon(Icons.alarm),
+                        title: Text(lnapshots.data[index]["Name"].toString()),
+                        subtitle: Text('L'),
+                    ),
+                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
-                        SwitchExample(),
+                        Switch(value: lnapshots.data[index]["Active"], onChanged: (bool value){
+                         updateact(inputData(),value,lnapshots.data[index]["Name"].toString());
+                         setState(() {
+                           
+                         });
+                        })
                       ],
                     ),
-                  ],
-                )
-              ),
+                  ],)
+                  
+                  );
+                            }
+                          );
+                          }
+                      } else if (lnapshots.hasError) {
+                        print("${lnapshots.error}");
+                          return Container(
+                    width:  MediaQuery.of(context).size.width / 2.01,
+                    height: MediaQuery.of(context).size.height / 6.3,
+                    decoration: BoxDecoration(
+                    ),
+                    child: Card(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text(
+                            'Upcoming Alarms',
+                          ),
+                          SizedBox(
+                              height: MediaQuery.of(context).size.height * .02),
+                          
+                          Center(child: Text(
+                           "${lnapshots.error}",
+                              )),
+                        ],
+                      ),
+                    ),
+                  );
+                        }
+                        // By default show a loading spinner.
+                        return const CircularProgressIndicator();
+                      }
+                            ),
 
-            ],
-          ),
-        ),
-      ][currentPageIndex],
+              ElevatedButton(
+                onPressed: () {
+                
+
+              }, child: Text("create"))
+          ]),
+      ),
+      )
     );
   }
-}
-class SwitchExample extends StatefulWidget {
-  const SwitchExample({super.key});
 
-  @override
-  State<SwitchExample> createState() => _SwitchExampleState();
+  
 }
 
-class _SwitchExampleState extends State<SwitchExample> {
-  bool light0 = true;
-  bool light1 = true;
 
-  final MaterialStateProperty<Icon?> thumbIcon =
-      MaterialStateProperty.resolveWith<Icon?>(
-    (Set<MaterialState> states) {
-      if (states.contains(MaterialState.selected)) {
-        return const Icon(Icons.alarm_on);
-      }
-      return const Icon(Icons.alarm_off);
-    },
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Switch(
-          thumbIcon: thumbIcon,
-          value: light1,
-          onChanged: (bool value) {
-            setState(() {
-              light1 = value;
-            });
-          },
-        ),
-      ],
-    );
-  }
-}
