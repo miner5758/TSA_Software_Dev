@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
@@ -6,7 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'Sleep.dart';
+import 'sleep.dart';
 import 'authentication_service.dart';
 
 import 'alarms.dart';
@@ -14,7 +16,6 @@ import 'alarms.dart';
 
 
 int age = 17;
-List<bool> _checked = [];
 
 DateTime _now = DateTime.now();
 DateTime _start = DateTime(_now.year, _now.month, _now.day, 0, 0);
@@ -24,12 +25,12 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final db = FirebaseFirestore.instance;
 
 String formatTimestampdate(Timestamp timestamp) {
-  var format = new DateFormat('y-M-d'); // <- use skeleton here
+  var format = DateFormat('y-M-d'); // <- use skeleton here
   return format.format(timestamp.toDate());
 }
 
 String formatTimestamptime(Timestamp timestamp) {
-  var format = new DateFormat('hh:mm a'); // <- use skeleton here
+  var format = DateFormat('hh:mm a'); // <- use skeleton here
   return format.format(timestamp.toDate());
 }
 
@@ -41,10 +42,10 @@ String? inputData() {
 }
 
 Future<List<Object?>> _gettata(String? iD) async {
-  CollectionReference _collectionRef =
+  CollectionReference collectionRef =
       db.collection("Users").doc("$iD").collection("Alarms");
   // Get docs from collection reference
-  QuerySnapshot querySnapshot = await _collectionRef.where('time', isGreaterThanOrEqualTo: _start) 
+  QuerySnapshot querySnapshot = await collectionRef.where('time', isGreaterThanOrEqualTo: _start) 
            .where('time', isLessThanOrEqualTo: _end)
            .orderBy('time')
            .where("Active", isEqualTo: true) 
@@ -58,10 +59,10 @@ Future<List<Object?>> _gettata(String? iD) async {
 
 
 Future<List<Object?>> _getbedtime(String? iD) async {
-  CollectionReference _collectionRef =
+  CollectionReference collectionRef =
       db.collection("Users").doc("$iD").collection("Bedtimes");
   // Get docs from collection reference
-  QuerySnapshot querySnapshot = await _collectionRef
+  QuerySnapshot querySnapshot = await collectionRef
            .orderBy('time')
            .where("Active", isEqualTo: true) 
            .get();
@@ -74,10 +75,10 @@ Future<List<Object?>> _getbedtime(String? iD) async {
 
 
 Future<List<Object?>> _gettask(String? iD) async {
-  CollectionReference _collectionRef =
+  CollectionReference collectionRef =
       db.collection("Users").doc("$iD").collection("Tasks");
   // Get docs from collection reference
-  QuerySnapshot querySnapshot = await _collectionRef.where('When', isGreaterThanOrEqualTo: _start) 
+  QuerySnapshot querySnapshot = await collectionRef.where('When', isGreaterThanOrEqualTo: _start) 
            .where('When', isLessThanOrEqualTo: _end)
            .orderBy('When')
            .get();
@@ -91,15 +92,12 @@ Future<List<Object?>> _gettask(String? iD) async {
 
 
 Future<Duration> _getUsageStats() async {
-  List<AppUsageInfo> _infos = [];
   Duration combined = const Duration();
   try {
     DateTime endDate = DateTime.now();
-    DateTime startDate = endDate.subtract(Duration(hours: 24));
+    DateTime startDate = endDate.subtract(const Duration(hours: 24));
     List<AppUsageInfo> infoList =
         await AppUsage().getAppUsage(startDate, endDate);
-    _infos = infoList;
-
     for (var info in infoList) {
       combined += info.usage;
       //print(info.usage.inHours);
@@ -117,7 +115,7 @@ class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: MyStatefulWidgetsecond(),
     );
   }
@@ -125,13 +123,13 @@ class MyHomePage extends StatelessWidget {
 
 
 class MyStatefulWidgetfirst extends StatefulWidget {
-   MyStatefulWidgetfirst({Key? key}) : super(key: key);
+   const MyStatefulWidgetfirst({super.key});
   @override
   State<MyStatefulWidgetfirst> createState() => _MyStatefulWidgetStatefirst();
 }
 
 class MyStatefulWidgetsecond extends StatefulWidget {
-   MyStatefulWidgetsecond({Key? key}) : super(key: key);
+   const MyStatefulWidgetsecond({super.key});
   @override
   State<MyStatefulWidgetsecond> createState() => _MyStatefulWidgetStatesecond();
 }
@@ -143,7 +141,7 @@ class _MyStatefulWidgetStatefirst extends State<MyStatefulWidgetfirst> {
     Timer(
         const Duration(seconds: 3),
         () => Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => MyStatefulWidgetsecond())));
+            context, MaterialPageRoute(builder: (context) => const MyStatefulWidgetsecond())));
   }
 
   @override
@@ -160,7 +158,6 @@ class _MyStatefulWidgetStatesecond extends State<MyStatefulWidgetsecond> {
   TextEditingController namecontroller = TextEditingController();
 TextEditingController descriptioncontroller = TextEditingController();
 
-  bool _value = false;
   int _selectedIndex = 1;
   final pages = [
     const Sleeppage(),
@@ -175,7 +172,7 @@ TextEditingController descriptioncontroller = TextEditingController();
   }
 
   void updatetask(String? iD,bool? value,String dic){
-    db.collection('Users').doc("$iD").collection("Tasks").doc("$dic").update({'Done': value ?? false});
+    db.collection('Users').doc("$iD").collection("Tasks").doc(dic).update({'Done': value ?? false});
 
 }
 
@@ -201,11 +198,11 @@ void createtask(String? iD,DateTime date){
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
             // sets the background color of the `BottomNavigationBar`
-            canvasColor: Color.fromARGB(255, 230,230,250),
+            canvasColor: const Color.fromARGB(255, 230,230,250),
             // sets the active color of the `BottomNavigationBar` if `Brightness` is light
             textTheme: Theme.of(context)
                 .textTheme
-                .copyWith(caption: const TextStyle(color: Color.fromARGB(255, 158, 158, 158)))),
+                .copyWith(bodySmall: const TextStyle(color: Color.fromARGB(255, 158, 158, 158)))),
         child: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -231,7 +228,7 @@ void createtask(String? iD,DateTime date){
             ? pages[_selectedIndex]
             : 
               Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
             image: DecorationImage(
                 image: AssetImage("lib/images/back.jpg"),
                 fit: BoxFit.cover),
@@ -247,7 +244,7 @@ void createtask(String? iD,DateTime date){
                       builder: (context, AsyncSnapshot snapshots){
                          if (snapshots.hasData) {
                       return Center(child:Text(
-                                        "Welcome back " + snapshots.data.toString(),
+                                        "Welcome back ${snapshots.data}",
                                         style: const TextStyle(
                                           
                                             fontSize: 25,
@@ -295,7 +292,7 @@ void createtask(String? iD,DateTime date){
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 19.0),
                                       child: Center(child:Text(
-                                        "You have a screen time of ${lnapshots.data.inHours} hours. You are ${lnapshots.data.inHours - 1} hours over the recommended screen time for someone your age as it is recommended that you get less than 1 hour of screen time per day. Blue light can negatively affect your ability to fall alseep so work on reducing it anyway you can.",
+                                        "Your screen time: ${lnapshots.data.inHours}h. \nRecommended: ${lnapshots.data.inHours - 1}h.\nTry lessening your screen time, blue light sleep harder.",
                                         style:  TextStyle(
                                             fontSize: MediaQuery.of(context).size.height * .016,
                                             fontWeight: FontWeight.bold),
@@ -329,7 +326,7 @@ void createtask(String? iD,DateTime date){
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 19.0),
                                       child: Center(child:Text(
-                                        "You have a screen time of ${lnapshots.data.inHours} Hours, keep it up!",
+                                        "You have a screen time of ${lnapshots.data.inHours}h, keep up the good work!",
                                         style:  TextStyle(
                                             fontSize: MediaQuery.of(context).size.height * .2,
                                             fontWeight: FontWeight.bold),
@@ -365,7 +362,7 @@ void createtask(String? iD,DateTime date){
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 19.0),
                                       child: Center(child:Text(
-                                        "You have a screen time of ${lnapshots.data.inHours} hours. You are ${lnapshots.data.inHours - 2} hours over the recommended screen time for someone your age as it is recommended that you get less than 2 hours of screen time per day. Blue light can negatively affect your ability to fall alseep so work on reducing it anyway you can.",
+                                        "Your screen time: ${lnapshots.data.inHours}h. \nRecommended: ${lnapshots.data.inHours - 2}h.\nTry lessening your screen time, blue light sleep harder.",
                                         style:  TextStyle(
                                             fontSize: MediaQuery.of(context).size.height * .016,
                                             fontWeight: FontWeight.bold),
@@ -434,7 +431,7 @@ void createtask(String? iD,DateTime date){
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 19.0),
                                       child: Center(child:Text(
-                                        "You have a screen time of ${lnapshots.data.inHours} Hours. You are ${lnapshots.data.inHours - 3} hours over the recommended screen time for someone your age as it is recommended that you get less than 3 hours of screen time per day. Blue light can negatively affect your ability to fall alseep so work on reducing it anyway you can.",
+                                        "Your screen time: ${lnapshots.data.inHours}h. \nRecommended: ${lnapshots.data.inHours - 3}h.\nTry lessening your screen time, blue light sleep harder.",
                                         style:  TextStyle(
                                             fontSize: MediaQuery.of(context).size.height * .016,
                                             fontWeight: FontWeight.bold),
@@ -504,7 +501,7 @@ void createtask(String? iD,DateTime date){
                             return Container(
                     width:  MediaQuery.of(context).size.width / 2.01,
                     height: MediaQuery.of(context).size.height / 6.3,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                     ),
                     child: Card(
                       clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -516,13 +513,13 @@ void createtask(String? iD,DateTime date){
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text(
+                          const Text(
                             'Upcoming Alarms',
                           ),
                           SizedBox(
                               height: MediaQuery.of(context).size.height * .02),
                           
-                          Center(child: Text(
+                          const Center(child: Text(
                            "None",
                               )),
                         ],
@@ -533,7 +530,7 @@ void createtask(String? iD,DateTime date){
                             return Container(
                     width:  MediaQuery.of(context).size.width / 2.01,
                     height: MediaQuery.of(context).size.height / 6.3,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                     ),
                     child: Card(
                       clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -545,7 +542,7 @@ void createtask(String? iD,DateTime date){
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text(
+                          const Text(
                             'Upcoming Alarms',
                           ),
                           SizedBox(
@@ -573,7 +570,7 @@ void createtask(String? iD,DateTime date){
                           return Container(
                     width:  MediaQuery.of(context).size.width / 2.01,
                     height: MediaQuery.of(context).size.height / 6.3,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                     ),
                     child: Card(
                       clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -585,7 +582,7 @@ void createtask(String? iD,DateTime date){
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text(
+                          const Text(
                             'Upcoming Alarms',
                           ),
                           SizedBox(
@@ -612,7 +609,7 @@ void createtask(String? iD,DateTime date){
                             return Container(
                     width:  MediaQuery.of(context).size.width / 2.01,
                     height: MediaQuery.of(context).size.height / 6.3,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                     ),
                     child: Card(
                       clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -624,13 +621,13 @@ void createtask(String? iD,DateTime date){
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text(
+                          const Text(
                             'Upcoming Bedtime',
                           ),
                           SizedBox(
                               height: MediaQuery.of(context).size.height * .02),
                           
-                          Center(child: Text(
+                          const Center(child: Text(
                            "None",
                               )),
                         ],
@@ -641,7 +638,7 @@ void createtask(String? iD,DateTime date){
                             return Container(
                     width:  MediaQuery.of(context).size.width / 2.01,
                     height: MediaQuery.of(context).size.height / 6.3,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                     ),
                     child: Card(
                       clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -653,7 +650,7 @@ void createtask(String? iD,DateTime date){
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text(
+                          const Text(
                             'Upcoming Bedtime',
                           ),
                           SizedBox(
@@ -681,7 +678,7 @@ void createtask(String? iD,DateTime date){
                           return Container(
                     width:  MediaQuery.of(context).size.width / 2.01,
                     height: MediaQuery.of(context).size.height / 6.3,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                     ),
                     child: Card(
                       clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -693,7 +690,7 @@ void createtask(String? iD,DateTime date){
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text(
+                          const Text(
                             'Upcoming Bedtime',
                           ),
                           SizedBox(
@@ -722,7 +719,7 @@ void createtask(String? iD,DateTime date){
                       height: MediaQuery.of(context).size.height * .05),
                   const Center(child:Text(
                                         "Task for Today: ",
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                             fontSize: 25,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -734,12 +731,12 @@ void createtask(String? iD,DateTime date){
 showDialog(
   context: context,
   builder: (context) {
-    DateTime _date = DateTime.now();
+    DateTime date = DateTime.now();
     return StatefulBuilder(
       builder: (context, setState) {
         return AlertDialog(
                     scrollable: true,
-                    title: Text('Create Task'),
+                    title: const Text('Create Task'),
                     content: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Form(
@@ -747,7 +744,7 @@ showDialog(
                           children: <Widget>[
                             TextFormField(
                               controller: namecontroller,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 
                                 labelText: 'Name',
                                 icon: Icon(Icons.account_box),
@@ -761,7 +758,7 @@ return null;
                             ),
                             TextFormField(
                               controller: descriptioncontroller,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Description',
                                 icon: Icon(Icons.email),
                                 
@@ -777,8 +774,8 @@ return null;
                             TextFormField(
                               readOnly: true,
                               decoration: InputDecoration(
-                                labelText: DateFormat('MM/dd/yyyy - hh:mm a').format(_date),
-                                icon: Icon(Icons.calendar_month),
+                                labelText: DateFormat('MM/dd/yyyy - hh:mm a').format(date),
+                                icon: const Icon(Icons.calendar_month),
                               ),
                             ),
 
@@ -792,7 +789,7 @@ return null;
                 builder: (BuildContext context) {
                   return AlertDialog(
                     scrollable: true,
-                    title: Text('Pick Date'),
+                    title: const Text('Pick Date'),
                     content: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child:SizedBox(
@@ -804,7 +801,7 @@ return null;
                 initialDateTime: DateTime.now(),
                 onDateTimeChanged: (DateTime newDateTime) {
                   setState(() {
-                    _date = newDateTime;
+                    date = newDateTime;
                   });
                   
                 },
@@ -828,7 +825,7 @@ return null;
                      actions: [
                       Row(children: <Widget>[
                         ElevatedButton(
-                          child: Text("Cancel"),
+                          child: const Text("Cancel"),
                           onPressed: () {
                             namecontroller.text = "";
                             descriptioncontroller.text = "";
@@ -836,10 +833,10 @@ return null;
                           }),
 
                         ElevatedButton(
-                          child: Text("Submit"),
+                          child: const Text("Submit"),
                           onPressed: () {
 
-                           createtask(inputData(),_date);
+                           createtask(inputData(),date);
                            Navigator.pop(context);
                            namecontroller.text = "";
                             descriptioncontroller.text = "";
@@ -860,13 +857,13 @@ return null;
 
             
           },
-  child: Text('Create Task'),
   style: ElevatedButton.styleFrom(
-    primary: const Color(0x218380), // Change color as need
-    onPrimary: Colors.white, // Change text color as needed
+    backgroundColor: const Color(0x00218380), // Change color as need
+    foregroundColor: Colors.white, // Change text color as needed
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
     minimumSize: Size(MediaQuery.of(context).size.width/2, 50), // Adjust size as needed
   ),
+  child: const Text('Create Task'),
 ),
 SizedBox(
                       height: MediaQuery.of(context).size.height * .02),

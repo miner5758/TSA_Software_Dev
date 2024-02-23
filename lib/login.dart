@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:provider/provider.dart';
 import 'authentication_service.dart';
 
 class Logscreen extends StatelessWidget {
-  const Logscreen({Key? key}) : super(key: key);
+  const Logscreen({super.key});
   static const String _title = 'Team 23238-1';
   @override
   Widget build(BuildContext context) {
@@ -22,22 +23,22 @@ class Logscreen extends StatelessWidget {
             _title,
             style: TextStyle(fontSize: 25, fontStyle: FontStyle.italic),
           ),
-          backgroundColor: Color.fromARGB(255, 167, 166, 166),
+          backgroundColor: const Color.fromARGB(255, 167, 166, 166),
         ),
       ),
       body: Container(
-        child: const MyStatefulWidget(),
         decoration: const BoxDecoration(
             image: DecorationImage(
                 image: AssetImage("lib/images/back.jpg"),
                 fit: BoxFit.cover)),
+        child: const MyStatefulWidget(),
       ),
     );
   }
 }
 
 class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({Key? key}) : super(key: key);
+  const MyStatefulWidget({super.key});
 
   @override
   State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
@@ -121,6 +122,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                 },
               )),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const Text('Dont have an account?'),
               TextButton(
@@ -133,7 +135,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                 },
               )
             ],
-            mainAxisAlignment: MainAxisAlignment.center,
           ),
         ],
       ),

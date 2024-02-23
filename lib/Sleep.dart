@@ -17,21 +17,21 @@ final db = FirebaseFirestore.instance;
 
 
 String formatTimestampdate(Timestamp timestamp) {
-  var format = new DateFormat('y-M-d'); // <- use skeleton here
+  var format = DateFormat('y-M-d'); // <- use skeleton here
   return format.format(timestamp.toDate());
 }
 
 String formatTimestamptime(Timestamp timestamp) {
-  var format = new DateFormat('hh:mm a'); // <- use skeleton here
+  var format = DateFormat('hh:mm a'); // <- use skeleton here
   return format.format(timestamp.toDate());
 }
 
 Future<List<Object?>> _gettata(String? iD) async {
   
-  CollectionReference _collectionRef =
+  CollectionReference collectionRef =
       db.collection("Users").doc("$iD").collection("Tracking");
   // Get docs from collection reference
-  QuerySnapshot querySnapshot = await _collectionRef.orderBy("Start").get();
+  QuerySnapshot querySnapshot = await collectionRef.orderBy("Start").get();
 
   // Get data from docs and convert map to List
   final allData = querySnapshot.docs.map((doc) => doc.data()).toList().reversed;
@@ -49,14 +49,14 @@ class Sleeppage extends StatelessWidget {
   const Sleeppage({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: MyStatefulWidgetfirst(),
     );
   }
 }
 
 class MyStatefulWidgetfirst extends StatefulWidget {
-   MyStatefulWidgetfirst({Key? key}) : super(key: key);
+   const MyStatefulWidgetfirst({super.key});
   @override
   State<MyStatefulWidgetfirst> createState() => _MyStatefulWidgetStatefirst();
 }
@@ -159,7 +159,7 @@ void dispose() {
     stopwatch = Stopwatch();
   
  
-    t = Timer.periodic(Duration(milliseconds: 30), (timer) {
+    t = Timer.periodic(const Duration(milliseconds: 30), (timer) {
       setState(() {});
     });
   }
@@ -184,26 +184,33 @@ void dispose() {
         builder: (context) {
           if (_pag == "tracking"){
             return Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
             gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF3366FF),
-                  const Color(0xFF00CCFF),
+                  Color(0xFF3366FF),
+                  Color(0xFF00CCFF),
                 ],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 0.0),
+                begin: FractionalOffset(0.0, 0.0),
+                end: FractionalOffset(1.0, 0.0),
                 stops: [0.0, 1.0],
                 tileMode: TileMode.clamp),
           ),
                   child:
         Column( children: [
-          SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
+        SafeArea(child:    
                 Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                Center(child:Text(
+                                        "Sleep Tracker",
+                                        style:  TextStyle(
+                                            fontSize: MediaQuery.of(context).size.height * .03,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.88,
+                      width: MediaQuery.of(context).size.width * 0.45,
                     ),
                     Container(
                       height: MediaQuery.of(context).size.height * 0.06,
@@ -227,19 +234,12 @@ void dispose() {
                     ),
                   ],
                 ),
-                Center(child:Text(
-                                        "Sleep Tracker",
-                                        style:  TextStyle(
-                                            fontSize: MediaQuery.of(context).size.height * .03,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      ),
-        SafeArea(
+),
+        Expanded(
         child: Center(
           child: Column( // this is the column
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
- 
               ElevatedButton(
                 onPressed: () {
                   handleStartStop();
@@ -252,7 +252,7 @@ void dispose() {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,  // this one is use for make the circle on ui.
                     border: Border.all(
-                      color: Color.fromARGB(255, 235, 77, 3),
+                      color: const Color.fromARGB(255, 235, 77, 3),
                       width: MediaQuery.of(context).size.height * .005,
                     ),
                   ),
@@ -264,23 +264,20 @@ void dispose() {
                   ),),
                 ),
               ),
- 
-              SizedBox(height: MediaQuery.of(context).size.height * .02,),
-
-              Row(children: [
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               ElevatedButton(     // this the cupertino button and here we perform all the reset button function
                 onPressed: () {
                   fir = true;
                   stopwatch.reset();
                 },
-                child: Text("Reset", style: TextStyle(
+                child: const Text("Reset", style: TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),),
               ),
 
               SizedBox(
-                width: MediaQuery.of(context).size.width * .55),
+                width: MediaQuery.of(context).size.width * .05),
               ElevatedButton(     // this the cupertino button and here we perform all the reset button function
                 onPressed: () {
                   record(inputData(), returnFormattedText());
@@ -288,7 +285,7 @@ void dispose() {
                   stopwatch.reset();
                 },
                 
-                child: Text("Record", style: TextStyle(
+                child: const Text("Record", style: TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),),
@@ -303,27 +300,34 @@ void dispose() {
         ); 
           } else if(_pag == "playlist"){
             return Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
             gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF3366FF),
-                  const Color(0xFF00CCFF),
+                  Color(0xFF3366FF),
+                  Color(0xFF00CCFF),
                 ],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 0.0),
+                begin: FractionalOffset(0.0, 0.0),
+                end: FractionalOffset(1.0, 0.0),
                 stops: [0.0, 1.0],
                 tileMode: TileMode.clamp),
           ),
                   child:
         Column( 
           children: [
-            SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-            Row(
+        SafeArea(child:    
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                Center(child:Text(
+                                        "Playlist",
+                                        style:  TextStyle(
+                                            fontSize: MediaQuery.of(context).size.height * .03,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.88,
+                      width: MediaQuery.of(context).size.width * 0.45,
                     ),
                     Container(
                       height: MediaQuery.of(context).size.height * 0.06,
@@ -347,15 +351,7 @@ void dispose() {
                     ),
                   ],
                 ),
-
-                Center(child:Text(
-                                        "Playlist",
-                                        style:  TextStyle(
-                                            fontSize: MediaQuery.of(context).size.height * .03,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      ),
-
+),
               const Spacer( 
             flex: 2, 
           ), 
@@ -481,25 +477,32 @@ void dispose() {
         );
           }else if(_pag == "history"){
             return Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
             gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF3366FF),
-                  const Color(0xFF00CCFF),
+                  Color(0xFF3366FF),
+                  Color(0xFF00CCFF),
                 ],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 0.0),
+                begin: FractionalOffset(0.0, 0.0),
+                end: FractionalOffset(1.0, 0.0),
                 stops: [0.0, 1.0],
                 tileMode: TileMode.clamp),
           ),
           child: Column(children: [
-            SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
+        SafeArea(child:    
                 Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                Center(child:Text(
+                                        "Sleep History",
+                                        style:  TextStyle(
+                                            fontSize: MediaQuery.of(context).size.height * .03,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.88,
+                      width: MediaQuery.of(context).size.width * 0.45,
                     ),
                     Container(
                       height: MediaQuery.of(context).size.height * 0.06,
@@ -523,13 +526,7 @@ void dispose() {
                     ),
                   ],
                 ),
-                Center(child:Text(
-                                        "Sleep History",
-                                        style:  TextStyle(
-                                            fontSize: MediaQuery.of(context).size.height * .03,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      ),
+),
 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.04,
                 ),
@@ -538,7 +535,7 @@ SizedBox(
                       builder: (context, AsyncSnapshot lnapshots){
                         if(lnapshots.hasData){
                           if (lnapshots.data.length == 0){
-                            return Text("No Data");
+                            return const Text("No Data");
                           }  else{
                             return Expanded(child: ListView.builder(
                             padding: EdgeInsets.zero,
@@ -549,19 +546,19 @@ SizedBox(
                             itemBuilder: (context, index){
                               return SizedBox(child: Card(
                                 child: ExpansionTile(
-                                title: Text("Your sleep on " + formatTimestampdate(lnapshots.data[index]["Start"]).toString()),
+                                title: Text("Your sleep on ${formatTimestampdate(lnapshots.data[index]["Start"])}"),
                                 children: <Widget> [
                                   Column(children: [
                                     Center(child: ListTile(
                                 trailing:
-                                  Icon(Icons.punch_clock_rounded),
-                                  title: Text("Start: " + formatTimestamptime(lnapshots.data[index]["Start"]).toString()),
+                                  const Icon(Icons.punch_clock_rounded),
+                                  title: Text("Start: ${formatTimestamptime(lnapshots.data[index]["Start"])}"),
 
                               ),),
                               Center(child: ListTile(
                                 trailing:
-                                  Icon(Icons.bed_outlined),
-                                  title: Text("Duration: " + lnapshots.data[index]["Length"].toString()),
+                                  const Icon(Icons.bed_outlined),
+                                  title: Text("Duration: ${lnapshots.data[index]["Length"]}"),
 
                               ),)
                                   ],)
@@ -584,20 +581,20 @@ SizedBox(
             );
           } else{
             return Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
             gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF3366FF),
-                  const Color(0xFF00CCFF),
+                  Color(0xFF3366FF),
+                  Color(0xFF00CCFF),
                 ],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 0.0),
+                begin: FractionalOffset(0.0, 0.0),
+                end: FractionalOffset(1.0, 0.0),
                 stops: [0.0, 1.0],
                 tileMode: TileMode.clamp),
           ),
                   child:
         Column( children: [
-          SizedBox(
+SizedBox(
                   height: MediaQuery.of(context).size.height * 0.02,
                 ),
                 Row(
@@ -652,7 +649,7 @@ SizedBox(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,  // this one is use for make the circle on ui.
                     border: Border.all(
-                      color: Color.fromARGB(255, 235, 77, 3),
+                      color: const Color.fromARGB(255, 235, 77, 3),
                       width: MediaQuery.of(context).size.height * .005,
                     ),
                   ),
@@ -665,22 +662,18 @@ SizedBox(
                 ),
               ),
  
-              SizedBox(height: MediaQuery.of(context).size.height * .02,),
 
-              Row(children: [
+              Center(child: Row(children: [
               ElevatedButton(     // this the cupertino button and here we perform all the reset button function
                 onPressed: () {
                   fir = true;
                   stopwatch.reset();
                 },
-                child: Text("Reset", style: TextStyle(
+                child: const Text("Reset", style: TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),),
               ),
-
-              SizedBox(
-                width: MediaQuery.of(context).size.width * .565),
               ElevatedButton(     // this the cupertino button and here we perform all the reset button function
                 onPressed: () {
                   record(inputData(), returnFormattedText());
@@ -688,12 +681,12 @@ SizedBox(
                   stopwatch.reset();
                 },
                 
-                child: Text("Record", style: TextStyle(
+                child: const Text("Record", style: TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),),
               ),
-              ],)
+              ],),),
             ],
           ),
         
@@ -710,14 +703,14 @@ SizedBox(
         
       body:
       Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
             gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF3366FF),
-                  const Color(0xFF00CCFF),
+                  Color(0xFF3366FF),
+                  Color(0xFF00CCFF),
                 ],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 0.0),
+                begin: FractionalOffset(0.0, 0.0),
+                end: FractionalOffset(1.0, 0.0),
                 stops: [0.0, 1.0],
                 tileMode: TileMode.clamp),
           ),
@@ -1016,7 +1009,7 @@ Align( //The align widget
           alignment: Alignment.topLeft,
           height: MediaQuery.of(context).size.height * .08,
           width: MediaQuery.of(context).size.width * .7,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.horizontal(
@@ -1025,7 +1018,7 @@ Align( //The align widget
           ),
           child:  Material(
   color: Colors.white,
-  borderRadius: BorderRadius.horizontal(
+  borderRadius: const BorderRadius.horizontal(
               right: Radius.circular(50.0),
             ), child: InkWell(
           splashColor: Colors.blue,
@@ -1038,7 +1031,7 @@ Align( //The align widget
   builder: (context){
     return AlertDialog(
       scrollable: true,
-                    title: Text('Pick Song'),
+                    title: const Text('Pick Song'),
                     content: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(children: [
@@ -1136,7 +1129,7 @@ Align( //The align widget
           alignment: Alignment.topRight,
           height: MediaQuery.of(context).size.height * .08,
           width: MediaQuery.of(context).size.width * .7,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.horizontal(
@@ -1145,7 +1138,7 @@ Align( //The align widget
           ),
           child:  Material(
   color: Colors.white,
-  borderRadius: BorderRadius.horizontal(
+  borderRadius: const BorderRadius.horizontal(
               left: Radius.circular(50.0),
             ), child: InkWell(
           splashColor: Colors.blue,
@@ -1153,10 +1146,10 @@ Align( //The align widget
                                  showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  DateTime _date = DateTime.now();
+                  DateTime date = DateTime.now();
                   return AlertDialog(
                     scrollable: true,
-                    title: Text('Pick Date'),
+                    title: const Text('Pick Date'),
                     content: 
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -1169,7 +1162,7 @@ Align( //The align widget
                 initialDateTime: DateTime.now(),
                 onDateTimeChanged: (DateTime newDateTime) {
                   setState(() {
-                    _date = newDateTime;
+                    date = newDateTime;
                   });
                   
                 },
@@ -1180,19 +1173,19 @@ Align( //The align widget
                     ),
                     actions: [
                       ElevatedButton(
-                          child: Text("Cencel"),
+                          child: const Text("Cancel"),
                           onPressed: () {
-                            _date = DateTime.now();
+                            date = DateTime.now();
                            Navigator.pop(context);
                           }),
 
                           ElevatedButton(
-                          child: Text("Submit"),
+                          child: const Text("Submit"),
                           onPressed: () {
 
-                           createbedtime(inputData(),_date);
+                           createbedtime(inputData(),date);
                            Navigator.pop(context);
-                           _date = DateTime.now();
+                           date = DateTime.now();
                            
                           }),
                     ],
@@ -1221,7 +1214,7 @@ SizedBox(
           alignment: Alignment.topLeft,
           height: MediaQuery.of(context).size.height * .08,
           width: MediaQuery.of(context).size.width * .7,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.horizontal(
@@ -1230,7 +1223,7 @@ SizedBox(
           ),
           child:  Material(
   color: Colors.white,
-  borderRadius: BorderRadius.horizontal(
+  borderRadius: const BorderRadius.horizontal(
               right: Radius.circular(50.0),
             ), child: InkWell(
           splashColor: Colors.blue,
